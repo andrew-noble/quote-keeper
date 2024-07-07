@@ -1,0 +1,15 @@
+{
+  "name": "quotes_proj",
+  "version": "1.0.0",
+  "description": "A simple todo-like app that stores quotes by category. React frontend, express backend.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\" "
+  },
+  "author": "Andrew R. Noble",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

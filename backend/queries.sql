@@ -1,0 +1,69 @@
+--table creation
+
+CREATE TABLE quotes (
+	id SERIAL PRIMARY KEY NOT NULL,
+	text varchar(350),
+	already_sent BOOLEAN DEFAULT false
+)
+
+CREATE TABLE tags (
+	id SERIAL PRIMARY KEY,
+	tag_name varchar(25),
+	description text
+)
+
+CREATE TABLE quote_tag_association (
+	quote_id int,
+	tag_id int,
+	FOREIGN KEY (quote_id) REFERENCES quotes(id),
+	FOREIGN KEY (tag_id) REFERENCES tags(id),
+	PRIMARY KEY (quote_id, tag_id)
+)
+
+--get a list of quotes with a certain tag
+
+SELECT text, tags.tag_name FROM quotes
+INNER JOIN quote_tag_association on quotes.id = quote_tag_association.quote_id
+INNER JOIN tags ON quote_tag_association.tag_id = tags.id
+WHERE tags.tag_name = 'Funny';
+
+--get a list of quotes that are tagged by two specified tags: 
+--you basically just double up, creating a ton of records then cutting them down with the AND
+
+SELECT q.text
+FROM quotes q
+JOIN quote_tag_association qa1 ON q.id = qa1.quote_id
+JOIN quote_tag_association qa2 ON q.id = qa2.quote_id
+JOIN tags t1 ON qa1.tag_id = t1.id
+JOIN tags t2 ON qa2.tag_id = t2.id
+WHERE t1.tag_name = 'Practical' 
+  AND t2.tag_name = 'Funny';
+
+--get two random quotes that have two tags
+
+SELECT q.text
+FROM quotes q
+JOIN quote_tag_association qa1 ON q.id = qa1.quote_id
+JOIN quote_tag_association qa2 ON q.id = qa2.quote_id
+JOIN tags t1 ON qa1.tag_id = t1.id
+JOIN tags t2 ON qa2.tag_id = t2.id
+WHERE t1.tag_name = 'Practical' 
+  AND t2.tag_name = 'Funny';
+ORDER BY RANDOM() 
+LIMIT 2;
+
+--COOL ONE: Query for all quotes and also return a list of the tags they're associated with
+--the json_agg() SQL function creates a list of records associated with each quote.
+--the json_agg and GROUP BY clauses work together here. Worth recalling this
+
+SELECT q.id, q.text, COALESCE(json_agg(t.tag_name), '[]') AS tags
+FROM quotes q
+JOIN quote_tag_association qt_a on (q.id = qt_a.quote_id)
+JOIN tags t on (qt_a.tag_id = t.id)
+GROUP BY q.id
+ORDER BY q.id
+
+--update a quote's text
+UPDATE quotes
+SET text = 'Well, color me surprised.'
+WHERE id = 3
