@@ -45,8 +45,19 @@ app.get("/allTags", async (req, res) => {
 });
 
 app.post("/editQuote", async (req, res) => {
-  console.log(req.body);
-  // const result = await db.query("UPDATE quotes SET text = $1 WHERE id = $2", []
+  const { id, editedText, editedTagList } = req.body; //need to implement tag list updating later
+
+  try {
+    //beefy query that updates a id-specified quote's text, then returns its id, text, tagList
+    const result = await db.query(
+      "WITH updated AS (UPDATE quotes SET text = $1 WHERE id = $2 RETURNING id, text) SELECT u.id, u.text, COALESCE(json_agg(t.tag_name), '[]') AS tags FROM updated u LEFT JOIN quote_tag_association qt_a ON u.id = qt_a.quote_id LEFT JOIN tags t ON qt_a.tag_id = t.id GROUP BY u.id, u.text;",
+      [editedText, id]
+    );
+    const data = result.rows[0];
+    res.json(data);
+  } catch (e) {
+    console.log("Error modifying the database record --->", e);
+  }
 });
 
 const server = app.listen(port, () => {

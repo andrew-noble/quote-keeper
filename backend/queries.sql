@@ -67,3 +67,24 @@ ORDER BY q.id
 UPDATE quotes
 SET text = 'Well, color me surprised.'
 WHERE id = 3
+
+--get a id-specified quote's id, text, and list of associated tags.
+SELECT q.id, q.text, COALESCE(json_agg(t.tag_name), '[]') AS tags
+FROM quotes q
+JOIN quote_tag_association qt_a on (q.id = qt_a.quote_id)
+JOIN tags t on (qt_a.tag_id = t.id)
+WHERE q.id = 3
+GROUP BY q.id
+
+--BEEFCAKE: this updates a quote's text, then returns its id, updated text, and tagList
+WITH updated AS (
+  UPDATE quotes
+  SET text = 'test'
+  WHERE id = 3
+  RETURNING id, text
+)
+SELECT u.id, u.text, COALESCE(json_agg(t.tag_name), '[]') AS tags
+FROM updated u
+LEFT JOIN quote_tag_association qt_a ON u.id = qt_a.quote_id
+LEFT JOIN tags t ON qt_a.tag_id = t.id
+GROUP BY u.id, u.text;
