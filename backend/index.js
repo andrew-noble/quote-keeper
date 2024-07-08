@@ -18,7 +18,7 @@ const db = new pg.Client({
 });
 db.connect();
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(express.static("public")); //this just serves static files from the public folder
 // app.use([clientErrorHandler, databaseErrorHandler, serverErrorHandler]); //my custom error handler middleware
 app.use(cors({ origin: "http://localhost:5173" })); //this just permits requests from my frontend. Google CORS

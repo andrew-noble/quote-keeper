@@ -20,19 +20,24 @@ export default function App() {
 
   async function handleQuoteEdit(id, editedText, editedTagList) {
     //just tells backend to update DB
-    await axios.post("http://localhost:3000/editQuote", {});
+    console.log("Sending data:", { id, editedText, editedTagList });
+    await axios.post(
+      "http://localhost:3000/editQuote",
+      {
+        id: id,
+        editedText: editedText,
+        editedTagList: editedTagList,
+      },
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 
   return (
     <ul>
-      {quotes.map((item, index) => (
-        <Quote
-          key={item.id}
-          id={item.id}
-          text={item.text}
-          tags={item.tags}
-          editQuote={handleQuoteEdit}
-        />
+      {quotes.map((item) => (
+        <Quote key={item.id} data={item} editQuote={handleQuoteEdit} />
       ))}
     </ul>
   );
