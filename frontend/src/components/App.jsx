@@ -19,19 +19,25 @@ export default function App() {
   }, []);
 
   async function handleQuoteEdit(id, editedText, editedTagList) {
-    //just tells backend to update DB
-    console.log("Sending data:", { id, editedText, editedTagList });
-    await axios.post(
+    //hit backend for a DB change:
+    console.log("Sending data to backend:", { id, editedText, editedTagList });
+    const { data: newQuote } = await axios.post(
       "http://localhost:3000/editQuote",
       {
         id: id,
         editedText: editedText,
         editedTagList: editedTagList,
-      },
-      {
-        headers: { "Content-Type": "application/json" },
       }
     );
+    console.log("Received data from backend:", newQuote);
+    //update state with just the quote that was changed:
+    setQuotes((oldQuotes) => {
+      const newQuotes = oldQuotes.map((item) =>
+        item.id === newQuote.id ? newQuote : item
+      );
+      console.log("New, updated quote list:", newQuotes);
+      return newQuotes;
+    });
   }
 
   return (

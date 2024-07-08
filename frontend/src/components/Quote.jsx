@@ -17,24 +17,26 @@ export default function Quote(props) {
   }
 
   function handleSubmit(event) {
-    setIsBeingEdited(false); //returns to view mode
-    editQuote(id, fieldContent, tags); //triggers upstream edit function that hits backend, db
     event.preventDefault(); //prevent browser refresh
+    editQuote(id, fieldContent, tags); //triggers upstream edit function that hits backend, db
+    setIsBeingEdited(false); //returns to view mode
   }
 
   return (
     <>
-      <p>{text}</p>
       {isBeingEdited ? (
         <form onSubmit={handleSubmit}>
           <input value={fieldContent} onChange={handleEntry}></input>
         </form>
       ) : (
-        <ul>
-          {tags.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
+        <>
+          <p>{text}</p>
+          <ul>
+            {tags.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ul>
+        </>
       )}
       <button onClick={handleSwitchToEditing}>Edit</button>
     </>
