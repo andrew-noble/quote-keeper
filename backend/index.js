@@ -40,7 +40,7 @@ app.get("/all", async (req, res) => {
 });
 
 app.get("/allTags", async (req, res) => {
-  const result = await db.query("SELECT * from tags");
+  const result = await db.query("SELECT tag_name from tags");
   res.json(result.rows);
 });
 

@@ -3,8 +3,31 @@ import React, { useState } from "react";
 export default function CreateQuoteArea(props) {
   const [content, setContent] = useState({ text: "", tags: [] });
 
+  const { tagOptions } = props;
+
   function handleChange(event) {
-    const { name, value } = event.target; //gets the edited field's name and new value from the change event
+    const { name, value, checked } = event.target; //gets the edited field's name and new value from the change event
+    setContent((prevContent) => {
+      if (name != "text") {
+        let newTags;
+        checked
+          ? (newTags = [...prevContent.tags, value])
+          : (newTags = prevContent.tags.filter((thisTag) => thisTag != value));
+        return { ...prevContent, tags: newTags }; //new state var if tags was changed
+      } else {
+        return { ...prevContent, text: value }; //new state var if text was changed
+      }
+    });
+  }
+
+  function handleTagDelete(tagToDelete) {
+    //just reduces the state variable by the specified tag
+    setContent((prevContent) => {
+      const newTags = prevContent.tags.filter(
+        (thisTag) => thisTag != tagToDelete
+      );
+      return { ...prevContent, tags: newTags };
+    });
   }
 
   function handleSubmit(event) {
@@ -16,22 +39,26 @@ export default function CreateQuoteArea(props) {
     <>
       <h2>Add a New Quote</h2>
       <form onSubmit={handleSubmit}>
-        <label for="quote-text-entry">Enter the quote's text</label>
+        <label htmlFor="text">Enter the quote's text:</label>
         <input
           type="text"
-          name="quote-text-entry"
-          maxlength="30"
+          name="text"
+          maxLength="30"
+          value={content.text}
           onChange={handleChange}
         ></input>
-
-        <label for="quote-tags-entry">
-          Select up to three tags to associate with this quote
-        </label>
-        <input list="tag-options" name="quote-tags-entry"></input>
-        <select id="tag-options">
-          <option value="Usable">Usable</option>
-        </select>
-        <button type="submit">Add</button>
+        {tagOptions.map((tag, index) => (
+          <div key={index}>
+            <label htmlFor={tag}>{tag}</label>
+            <input
+              type="checkbox"
+              name={tag}
+              value={tag}
+              id={tag}
+              onChange={handleChange}
+            ></input>
+          </div>
+        ))}
       </form>
     </>
   );

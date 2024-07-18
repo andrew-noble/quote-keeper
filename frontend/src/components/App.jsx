@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Quote from "./Quote.jsx";
 import "./App.css";
+import CreateQuoteArea from "./CreateQuoteArea.jsx";
 
 export default function App() {
   const [quotes, setQuotes] = useState([]); //the quotes
@@ -12,8 +13,9 @@ export default function App() {
     async function fetchData() {
       const responseQuotes = await axios.get("http://localhost:3000/all");
       const responseTags = await axios.get("http://localhost:3000/allTags");
+      const listOfTags = responseTags.data.map((tagObj) => tagObj.tag_name); //unpacks object into simple array
       setQuotes(responseQuotes.data);
-      setTags(responseTags.data);
+      setTags(listOfTags);
     }
     fetchData();
   }, []);
@@ -41,10 +43,13 @@ export default function App() {
   }
 
   return (
-    <ul>
-      {quotes.map((item) => (
-        <Quote key={item.id} data={item} editQuote={handleQuoteEdit} />
-      ))}
-    </ul>
+    <>
+      <CreateQuoteArea tagOptions={tags} />
+      <ul>
+        {quotes.map((item) => (
+          <Quote key={item.id} data={item} editQuote={handleQuoteEdit} />
+        ))}
+      </ul>
+    </>
   );
 }
