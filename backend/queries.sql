@@ -88,3 +88,19 @@ FROM updated u
 LEFT JOIN quote_tag_association qt_a ON u.id = qt_a.quote_id
 LEFT JOIN tags t ON qt_a.tag_id = t.id
 GROUP BY u.id, u.text;
+
+-- This basically attaches specified tags to a specified quote via the assoc table. It
+-- does this given the quote_id and the list of tags you want to attach to it
+INSERT INTO quote_tag_association (quote_id, tag_id)
+SELECT 1, tags.id
+FROM tags
+WHERE tags.tag_name = ANY(<passed list of tags>)
+
+--Gets a specified quotes id, text, and tags
+SELECT q.id, q.text, json_agg(t.tag_name) AS tags
+FROM quotes q
+LEFT JOIN quote_tag_association qt_a ON q.id = qt_a.quote_id
+LEFT JOIN tags t ON qt_a.tag_id = t.id
+WHERE q.id = 7
+GROUP BY q.id
+

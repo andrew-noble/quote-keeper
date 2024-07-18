@@ -1,38 +1,34 @@
 import React, { useState } from "react";
 
 export default function CreateQuoteArea(props) {
-  const [content, setContent] = useState({ text: "", tags: [] });
+  const [addedQuote, setAddedQuote] = useState("");
+  const [assocTags, setAssocTags] = useState([]);
 
-  const { tagOptions } = props;
+  const { tagOptions, onQuoteAdd: handleQuoteAdd } = props;
 
-  function handleChange(event) {
-    const { name, value, checked } = event.target; //gets the edited field's name and new value from the change event
-    setContent((prevContent) => {
-      if (name != "text") {
-        let newTags;
-        checked
-          ? (newTags = [...prevContent.tags, value])
-          : (newTags = prevContent.tags.filter((thisTag) => thisTag != value));
-        return { ...prevContent, tags: newTags }; //new state var if tags was changed
+  function handleChangeTags(event) {
+    const { value, checked } = event.target; //gets the edited field's name and new value from the change event
+    setAssocTags((prevTags) => {
+      let newTags;
+      if (checked) {
+        newTags = [...prevTags, value];
       } else {
-        return { ...prevContent, text: value }; //new state var if text was changed
+        newTags = prevTags.filter((thisTag) => thisTag != value);
       }
+      return newTags;
     });
   }
 
-  function handleTagDelete(tagToDelete) {
-    //just reduces the state variable by the specified tag
-    setContent((prevContent) => {
-      const newTags = prevContent.tags.filter(
-        (thisTag) => thisTag != tagToDelete
-      );
-      return { ...prevContent, tags: newTags };
-    });
+  function handleChangeText(event) {
+    const { value } = event.target;
+    setAddedQuote(value);
   }
 
   function handleSubmit(event) {
     event.preventDefault(); //prevent browser refresh
-    //call upstream addQuote func
+    handleQuoteAdd(addedQuote, assocTags);
+    setAddedQuote("");
+    setAssocTags([]);
   }
 
   return (
@@ -42,23 +38,23 @@ export default function CreateQuoteArea(props) {
         <label htmlFor="text">Enter the quote's text:</label>
         <input
           type="text"
-          name="text"
           maxLength="30"
-          value={content.text}
-          onChange={handleChange}
+          value={addedQuote}
+          onChange={handleChangeText}
         ></input>
         {tagOptions.map((tag, index) => (
           <div key={index}>
             <label htmlFor={tag}>{tag}</label>
             <input
               type="checkbox"
-              name={tag}
               value={tag}
+              checked={assocTags.includes(tag) ? true : false}
               id={tag}
-              onChange={handleChange}
+              onChange={handleChangeTags}
             ></input>
           </div>
         ))}
+        <button type="submit">Add</button>
       </form>
     </>
   );

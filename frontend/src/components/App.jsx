@@ -5,7 +5,7 @@ import "./App.css";
 import CreateQuoteArea from "./CreateQuoteArea.jsx";
 
 export default function App() {
-  const [quotes, setQuotes] = useState([]); //the quotes
+  const [quotes, setQuotes] = useState([]); //the quotes in {id, text, tags[]} format
   const [tags, setTags] = useState([]); //the possible categories/tags each quote can be assoc with
   // const [sortTag, setSortTag] = useState();
 
@@ -42,9 +42,21 @@ export default function App() {
     });
   }
 
+  async function handleQuoteAdd(text, tags) {
+    console.log("Sending data to backend:", { text, tags });
+    const response = await axios.post("http://localhost:3000/addQuote", {
+      text: text,
+      tags: tags,
+    });
+    console.log(`New quote added with id: ${response.data.id}`);
+    setQuotes((oldQuotes) => {
+      return [...oldQuotes, response.data];
+    });
+  }
+
   return (
     <>
-      <CreateQuoteArea tagOptions={tags} />
+      <CreateQuoteArea tagOptions={tags} onQuoteAdd={handleQuoteAdd} />
       <ul>
         {quotes.map((item) => (
           <Quote key={item.id} data={item} editQuote={handleQuoteEdit} />
