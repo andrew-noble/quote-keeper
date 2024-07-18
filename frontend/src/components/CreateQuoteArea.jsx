@@ -42,18 +42,23 @@ export default function CreateQuoteArea(props) {
           value={addedQuote}
           onChange={handleChangeText}
         ></input>
-        {tagOptions.map((tag, index) => (
-          <div key={index}>
-            <label htmlFor={tag}>{tag}</label>
-            <input
-              type="checkbox"
-              value={tag}
-              checked={assocTags.includes(tag) ? true : false}
-              id={tag}
-              onChange={handleChangeTags}
-            ></input>
-          </div>
-        ))}
+        <label htmlFor="tag-select">Select up to 3 tags for this quote</label>
+        <div id="tag-select">
+          {tagOptions.map((tag, index) => (
+            <div key={index}>
+              <label htmlFor={tag}>{tag}</label>
+              <input
+                type="checkbox"
+                value={tag}
+                checked={assocTags.includes(tag) ? true : false}
+                id={tag}
+                onChange={handleChangeTags}
+                disabled={assocTags.length > 2 ? true : false}
+                //above limits selection to 3 tags
+              ></input>
+            </div>
+          ))}
+        </div>
         <button type="submit">Add</button>
       </form>
     </>
