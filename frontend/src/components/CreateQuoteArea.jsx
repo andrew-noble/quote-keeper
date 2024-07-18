@@ -4,7 +4,7 @@ export default function CreateQuoteArea(props) {
   const [addedQuote, setAddedQuote] = useState("");
   const [assocTags, setAssocTags] = useState([]);
 
-  const { tagOptions, onQuoteAdd: handleQuoteAdd } = props;
+  const { tagOptions, addQuote } = props;
 
   function handleChangeTags(event) {
     const { value, checked } = event.target; //gets the edited field's name and new value from the change event
@@ -26,7 +26,7 @@ export default function CreateQuoteArea(props) {
 
   function handleSubmit(event) {
     event.preventDefault(); //prevent browser refresh
-    handleQuoteAdd(addedQuote, assocTags);
+    addQuote(addedQuote, assocTags);
     setAddedQuote("");
     setAssocTags([]);
   }
@@ -38,7 +38,7 @@ export default function CreateQuoteArea(props) {
         <label htmlFor="text">Enter the quote's text:</label>
         <input
           type="text"
-          maxLength="30"
+          maxLength="80"
           value={addedQuote}
           onChange={handleChangeText}
         ></input>

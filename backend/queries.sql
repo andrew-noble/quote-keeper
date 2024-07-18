@@ -104,3 +104,9 @@ LEFT JOIN tags t ON qt_a.tag_id = t.id
 WHERE q.id = 7
 GROUP BY q.id
 
+--delete a quote
+--first: delete its tag associations:
+DELETE FROM quote_tag_association WHERE quote_id = 3
+--second, delete it
+DELETE FROM quotes WHERE id = 3
+

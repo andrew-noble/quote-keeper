@@ -48,18 +48,36 @@ export default function App() {
       text: text,
       tags: tags,
     });
-    console.log(`New quote added with id: ${response.data.id}`);
     setQuotes((oldQuotes) => {
       return [...oldQuotes, response.data];
     });
+    console.log(`New quote added with id: ${response.data.id}`);
+  }
+
+  async function handleQuoteDelete(id) {
+    console.log("Asking backend to delete quote with id:", id);
+    const response = await axios.delete(
+      `http://localhost:3000/deleteQuote/${id}`
+    );
+    console.log(response);
+    setQuotes((oldQuotes) => {
+      const newQuotes = oldQuotes.filter((thisQuote) => thisQuote.id != id);
+      return newQuotes;
+    });
+    console.log(`Quote deleted with id: ${response.data.id}`);
   }
 
   return (
     <>
-      <CreateQuoteArea tagOptions={tags} onQuoteAdd={handleQuoteAdd} />
+      <CreateQuoteArea tagOptions={tags} addQuote={handleQuoteAdd} />
       <ul>
         {quotes.map((item) => (
-          <Quote key={item.id} data={item} editQuote={handleQuoteEdit} />
+          <Quote
+            key={item.id}
+            data={item}
+            editQuote={handleQuoteEdit}
+            deleteQuote={handleQuoteDelete}
+          />
         ))}
       </ul>
     </>

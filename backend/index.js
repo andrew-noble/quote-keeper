@@ -56,7 +56,7 @@ app.post("/editQuote", async (req, res) => {
     const data = result.rows[0];
     res.json(data);
   } catch (e) {
-    console.log("Error modifying the database record --->", e);
+    console.log(`Error editing quote with id ${id} --->`, e);
   }
 });
 
@@ -82,7 +82,23 @@ app.post("/addQuote", async (req, res) => {
     );
     res.json(newQuote.rows[0]);
   } catch (e) {
-    console.log("Error modifying the database record --->", e);
+    console.log("Error adding new quote --->", e);
+  }
+});
+
+app.delete("/deleteQuote/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+
+  try {
+    //first delete the tag associations
+    await db.query("DELETE FROM quote_tag_association WHERE quote_id = $1", [
+      id,
+    ]);
+    //next delete the quote itself
+    await db.query("DELETE FROM quotes WHERE id = $1", [id]);
+    res.json({ id: id });
+  } catch (e) {
+    console.log(`Error deleting quote with id ${id}  --->`, e);
   }
 });
 
