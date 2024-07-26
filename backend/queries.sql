@@ -58,8 +58,8 @@ LIMIT 2;
 
 SELECT q.id, q.text, COALESCE(json_agg(t.tag_name), '[]') AS tags
 FROM quotes q
-JOIN quote_tag_association qt_a on (q.id = qt_a.quote_id)
-JOIN tags t on (qt_a.tag_id = t.id)
+LEFT JOIN quote_tag_association qt_a on (q.id = qt_a.quote_id)
+LEFT JOIN tags t on (qt_a.tag_id = t.id)
 GROUP BY q.id
 ORDER BY q.id
 
@@ -71,8 +71,8 @@ WHERE id = 3
 --get a id-specified quote's id, text, and list of associated tags.
 SELECT q.id, q.text, COALESCE(json_agg(t.tag_name), '[]') AS tags
 FROM quotes q
-JOIN quote_tag_association qt_a on (q.id = qt_a.quote_id)
-JOIN tags t on (qt_a.tag_id = t.id)
+LEFT JOIN quote_tag_association qt_a on (q.id = qt_a.quote_id)
+LEFT JOIN tags t on (qt_a.tag_id = t.id)
 WHERE q.id = 3
 GROUP BY q.id
 

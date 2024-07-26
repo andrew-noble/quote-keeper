@@ -10,6 +10,7 @@ export default function App() {
   // const [sortTag, setSortTag] = useState();
 
   useEffect(() => {
+    //why fetchData wrapper? --> because useEffect does not support promises (async/await)
     async function fetchData() {
       const responseQuotes = await axios.get("http://localhost:3000/all");
       const responseTags = await axios.get("http://localhost:3000/allTags");
@@ -59,7 +60,6 @@ export default function App() {
     const response = await axios.delete(
       `http://localhost:3000/deleteQuote/${id}`
     );
-    console.log(response);
     setQuotes((oldQuotes) => {
       const newQuotes = oldQuotes.filter((thisQuote) => thisQuote.id != id);
       return newQuotes;

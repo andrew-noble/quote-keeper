@@ -34,7 +34,7 @@ app.get("/", (req, res) => {
 app.get("/all", async (req, res) => {
   const result = await db.query(
     //retrieves quotes and their associated tags
-    "SELECT q.id, q.text, COALESCE(json_agg(t.tag_name), '[]') AS tags FROM quotes q JOIN quote_tag_association qt_a on (q.id = qt_a.quote_id) JOIN tags t on (qt_a.tag_id = t.id) GROUP BY q.id ORDER BY q.id"
+    "SELECT q.id, q.text, COALESCE(json_agg(t.tag_name), '[]') AS tags FROM quotes q LEFT JOIN quote_tag_association qt_a on (q.id = qt_a.quote_id) LEFT JOIN tags t on (qt_a.tag_id = t.id) GROUP BY q.id ORDER BY q.id"
   );
   res.json(result.rows); //best practice to just send data over
 });
@@ -90,6 +90,7 @@ app.delete("/deleteQuote/:id", async (req, res) => {
   const id = parseInt(req.params.id);
 
   try {
+    //IN THE FUTURE: group DB queries with a transaction or change DB schema to use ON DELETE CASCADES
     //first delete the tag associations
     await db.query("DELETE FROM quote_tag_association WHERE quote_id = $1", [
       id,

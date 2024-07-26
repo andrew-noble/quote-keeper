@@ -38,7 +38,7 @@ export default function CreateQuoteArea(props) {
         <label htmlFor="text">Enter the quote's text:</label>
         <input
           type="text"
-          maxLength="80"
+          maxLength="300"
           value={addedQuote}
           onChange={handleChangeText}
         ></input>

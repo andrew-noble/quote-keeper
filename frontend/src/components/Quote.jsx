@@ -7,8 +7,8 @@ export default function Quote(props) {
     deleteQuote,
   } = props;
   const [isBeingEdited, setIsBeingEdited] = useState(false);
-  const [fieldContent, setFieldContent] = useState(text); //inits fieldContent to the passed prop
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [fieldContent, setFieldContent] = useState(text); //inits fieldContent to the passed prop
 
   function handleEntry(event) {
     setFieldContent(event.target.value); //just tracks changing text field
@@ -25,14 +25,14 @@ export default function Quote(props) {
     deleteQuote(id);
   }
 
-  function handleSwitchToEditing() {
-    setIsBeingEdited(!isBeingEdited);
-    setFieldContent(text); //if user decides to not edit after all, this clears out their changes
-  }
-
   //asks you to confirm first
   function handleDelete() {
     setConfirmDelete(true); //prolly make dynamic? So they can undo this
+  }
+
+  function handleSwitchToEditing() {
+    setIsBeingEdited((prev) => !prev);
+    setFieldContent(text); //if user decides to not edit after all, this clears out their changes
   }
 
   return (
@@ -44,11 +44,9 @@ export default function Quote(props) {
       ) : (
         <>
           <p>{text}</p>
-          <ul>
-            {tags.map((item, index) => (
-              <li key={index}>{item}</li>
-            ))}
-          </ul>
+          {tags.map((item, index) => (
+            <p key={index}>{item}</p>
+          ))}
         </>
       )}
       <button onClick={handleSwitchToEditing}>Edit</button>
